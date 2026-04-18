@@ -1,3 +1,14 @@
+---
+title: News Credibilty Agent
+emoji: 😻
+colorFrom: pink
+colorTo: green
+sdk: gradio
+sdk_version: 6.12.0
+app_file: app.py
+pinned: false
+---
+
 # 🛡️ Veritas AI: News Credibility Analyzer
 
 An agentic AI misinformation monitoring system built for **Milestone 2: Agentic AI Misinformation Monitoring**. This project autonomously reasons about content, retrieves fact-checking sources, and generates structured credibility reports.
@@ -13,7 +24,7 @@ cp .env.example .env
 # Edit .env and add your GROQ_API_KEY (Get a free key at https://console.groq.com/keys)
 
 # 3. Run the application
-python main.py
+python app.py
 ```
 The application will launch on `http://0.0.0.0:7860`.
 
@@ -49,7 +60,7 @@ news-credibility-agent/
 │   └── url_loader.py  # Web scraper for extracting text from URLs
 ├── config/
 │   └── settings.py    # Environment variables and LLM configurations
-├── main.py            # Application entry point
+├── app.py             # Application entry point
 └── requirements.txt   # Cleaned dependencies (Pydantic removed for simplicity)
 ```
 
