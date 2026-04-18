@@ -1,0 +1,26 @@
+# Core dependencies
+langgraph>=0.2.0
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-text-splitters>=0.3.0
+
+# Vector store & embeddings
+faiss-cpu>=1.7.4
+sentence-transformers>=2.7.0
+
+# UI
+gradio>=4.0.0
+
+# HTTP & parsing
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+
+
+# LLM API clients
+groq>=0.9.0
+langchain-groq>=0.2.0
+
+# Utilities
+python-dotenv>=1.0.0
+tiktoken>=0.7.0
