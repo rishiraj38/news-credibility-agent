@@ -71,10 +71,10 @@ FACT_CHECK_DATABASE = [
 def load_csv_data() -> list[dict]:
     """Load additional fact-checks from the user-provided CSV dataset."""
     import csv
-    import os
+    from pathlib import Path
     
-    csv_path = "rag/data/raw/covid_dataset.csv"
-    if not os.path.exists(csv_path):
+    csv_path = Path(__file__).parent / "data" / "raw" / "covid_dataset.csv"
+    if not csv_path.exists():
         return []
         
     print(f"📄 Loading additional data from {csv_path}...")
@@ -114,10 +114,11 @@ def get_fact_check_data() -> list[dict]:
 
 
 def get_fact_check_by_category(category: str = None) -> list[dict]:
-    """Get fact-check data filtered by category."""
+    """Get fact-check data filtered by category (includes CSV data)."""
+    all_data = get_fact_check_data()
     if category is None:
-        return FACT_CHECK_DATABASE
-    return [item for item in FACT_CHECK_DATABASE if item.get("category") == category]
+        return all_data
+    return [item for item in all_data if item.get("category") == category]
 
 
 def format_doc_for_retrieval(doc: dict) -> str:
@@ -129,6 +130,7 @@ Source: {doc['source']}"""
 
 
 def get_categories() -> list[str]:
-    """Get all unique categories in the database."""
-    categories = set(item.get("category", "general") for item in FACT_CHECK_DATABASE)
+    """Get all unique categories in the database (includes CSV data)."""
+    all_data = get_fact_check_data()
+    categories = set(item.get("category", "general") for item in all_data)
     return sorted(list(categories))
