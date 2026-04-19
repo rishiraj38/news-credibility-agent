@@ -3,7 +3,6 @@ FAISS Vector Store for RAG retrieval.
 Stores and retrieves fact-check documents based on semantic similarity.
 """
 
-import os
 import json
 import faiss
 import numpy as np
@@ -11,11 +10,11 @@ from pathlib import Path
 from typing import Optional
 
 from config.settings import FAISS_INDEX_PATH, TOP_K_RETRIEVAL
+from rag.embedder import get_embedder, Embedder
+from rag.data_loader import get_fact_check_data, format_doc_for_retrieval
 
 # Minimum similarity score (0.0 - 1.0) to consider a match relevant
 SIMILARITY_THRESHOLD = 0.50
-from rag.embedder import get_embedder, Embedder
-from rag.data_loader import get_fact_check_data, format_doc_for_retrieval
 
 
 class FAISSVectorStore:
