@@ -5,7 +5,7 @@ Article analysis functions - claims, risks, and report generation.
 import json
 import re
 from langchain_groq import ChatGroq
-from config.settings import get_llm_config
+from config.settings import get_llm_config, MAX_CLAIMS_TO_ANALYZE
 
 
 def analyze_article(article_text: str) -> tuple[list, list, float]:
@@ -46,7 +46,7 @@ IMPORTANT: If the text is a factual, scientific, or neutral news report, you MUS
         risk_flags = result.get("risk_flags", [])
         risk_score = float(result.get("risk_score", 0.3))
 
-        return claims[:5], risk_flags, min(risk_score, 1.0)
+        return claims[:MAX_CLAIMS_TO_ANALYZE], risk_flags, min(risk_score, 1.0)
 
     except Exception as e:
         print(f"LLM analysis failed: {e}")
@@ -82,7 +82,7 @@ def _simple_analysis(article_text: str) -> tuple[list, list, float]:
         risk_flags.append("Absolute/definitive claims")
         risk_score += 0.15
 
-    return claims[:5], risk_flags, min(risk_score, 1.0)
+    return claims[:MAX_CLAIMS_TO_ANALYZE], risk_flags, min(risk_score, 1.0)
 
 
 def fact_check(claim: str, retrieved_docs: list) -> dict:
@@ -129,7 +129,8 @@ Respond with one word: Supported, Contradicted, or Unverified"""
 
         return {"claim": claim, "verification": "Unverified", "evidence": retrieved_docs[0]["document"][:300]}
 
-    except Exception:
+    except Exception as e:
+        print(f"LLM fact-check failed: {e}")
         return {"claim": claim, "verification": "Unverified", "evidence": retrieved_docs[0]["document"][:300]}
 
 

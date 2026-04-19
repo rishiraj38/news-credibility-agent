@@ -9,6 +9,7 @@ from langgraph.graph import StateGraph, START, END
 from agent.state import AgentState, create_initial_state
 from agent.analyzer import analyze_article, fact_check, generate_report
 from rag.vector_store import get_vector_store
+from config.settings import MAX_CLAIMS_TO_ANALYZE
 
 
 def input_node(state: AgentState) -> AgentState:
@@ -72,7 +73,7 @@ def fact_check_node(state: AgentState) -> AgentState:
     retrieved = {}
     results = []
 
-    for i, claim in enumerate(claims[:5], 1):
+    for i, claim in enumerate(claims[:MAX_CLAIMS_TO_ANALYZE], 1):
         docs = vector_store.retrieve(claim, top_k=2)
         retrieved[claim] = docs
 
