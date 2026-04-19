@@ -5,7 +5,6 @@ Clean Gradio UI for News Credibility Analyzer.
 import gradio as gr
 import json
 from agent.graph import run_analysis
-from rag.vector_store import initialize_vector_store
 
 
 def analyze(input_text: str):
@@ -78,9 +77,7 @@ def create_ui():
     .primary-btn:hover { background-color: #2ea043 !important; }
     """
 
-    with gr.Blocks(title="Veritas AI") as demo:
-        # Save custom_css in the demo object so we can use it in launch
-        demo.custom_css = custom_css
+    with gr.Blocks(title="Veritas AI", css=custom_css) as demo:
         with gr.Sidebar(elem_classes="sidebar-info"):
             gr.Markdown("### ⚙️ System Status")
             gr.Markdown(f"**Model:** `{model_name}`")
@@ -129,15 +126,9 @@ def create_ui():
 
 def launch():
     """Launch the UI interface."""
-    from rag.vector_store import initialize_vector_store
-    
-    print("Initializing components...")
-    vs = initialize_vector_store()
-    
     print("\n🚀 Starting Veritas AI Minimalist UI...")
     demo = create_ui()
-    # Pass css here
-    demo.launch(server_name="0.0.0.0", server_port=7860, css=demo.custom_css)
+    demo.launch(server_name="0.0.0.0", server_port=7860)
 
 
 if __name__ == "__main__":
