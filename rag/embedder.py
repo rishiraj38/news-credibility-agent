@@ -14,6 +14,7 @@ class Embedder:
         """Initialize the embedding model."""
         self.model_name = model_name
         self._model = None
+        self._dimension = None
 
     @property
     def model(self) -> SentenceTransformer:
@@ -40,10 +41,11 @@ class Embedder:
 
     @property
     def dimension(self) -> int:
-        """Get the embedding dimension."""
-        # MiniLM-L6-v2 produces 384-dimensional embeddings
-        sample = self.embed("test")
-        return len(sample)
+        """Get the embedding dimension (cached after first call)."""
+        if self._dimension is None:
+            # MiniLM-L6-v2 produces 384-dimensional embeddings
+            self._dimension = len(self.embed("test"))
+        return self._dimension
 
 
 # Global embedder instance for reuse
