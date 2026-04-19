@@ -5,7 +5,7 @@ News Credibility Analysis System
 Simple entry point - initializes RAG and launches UI.
 
 Usage:
-    python main.py
+    python app.py
 
 Set GROQ_API_KEY in .env file or environment.
 """
