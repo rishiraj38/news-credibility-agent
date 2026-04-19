@@ -61,35 +61,53 @@ def analysis_node(state: AgentState) -> AgentState:
 
 def fact_check_node(state: AgentState) -> AgentState:
     """Retrieve evidence and verify claims."""
+    from utils.search import web_search, format_search_result
+    
     claims = state["claims"]
 
     if not claims or state["errors"]:
         print("⚠️ No claims to fact-check or previous error exist")
         return state
 
-    print("🔍 Retrieving evidence from RAG database...")
+    print("🔍 Retrieving evidence...")
     vector_store = get_vector_store()
 
     retrieved = {}
     results = []
 
     for i, claim in enumerate(claims[:MAX_CLAIMS_TO_ANALYZE], 1):
+        # 1. Try local RAG
         docs = vector_store.retrieve(claim, top_k=2)
+        
+        # 2. Fallback to Web Search if no local match
+        is_web_search = False
+        if not docs:
+            print(f"   Claim {i}: No local match. Attempting live web search...")
+            web_results = web_search(f"fact check {claim}")
+            if web_results:
+                docs = [{"document": format_search_result(r), "score": 0.8} for r in web_results]
+                is_web_search = True
+                print(f"   Claim {i}: Found {len(web_results)} results via web search")
+        
         retrieved[claim] = docs
 
         # Use the dedicated fact_check function for LLM verification
         if docs:
             score = docs[0].get("score", 0)
-            print(f"   Claim {i}: Found strong match ({score:.2f} similarity)")
+            if not is_web_search:
+                print(f"   Claim {i}: Found local match ({score:.2f} similarity)")
+            
             result = fact_check(claim, docs)
             result["similarity_score"] = score
+            result["source_type"] = "Web" if is_web_search else "Local RAG"
         else:
-            print(f"   Claim {i}: No highly relevant matches found (below threshold)")
+            print(f"   Claim {i}: No evidence found locally or on web")
             result = {
                 "claim": claim,
                 "verification": "Unverified",
-                "evidence": "No highly relevant fact-checks found in the current database for this specific claim.",
-                "similarity_score": 0.0
+                "evidence": "No highly relevant fact-checks found in the current database or via live search.",
+                "similarity_score": 0.0,
+                "source_type": "None"
             }
             
         results.append(result)
